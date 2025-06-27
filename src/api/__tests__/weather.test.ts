@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchWeather } from '../weather';
 
 // Mock de fetch
-global.fetch = vi.fn();
+vi.stubGlobal('fetch', vi.fn());
 
 describe('fetchWeather', () => {
   beforeEach(() => {
@@ -32,10 +32,11 @@ describe('fetchWeather', () => {
       }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => mockWeatherData
-    });
+    } as Response);
 
     const result = await fetchWeather(48.8566, 2.3522);
 
@@ -49,18 +50,20 @@ describe('fetchWeather', () => {
   });
 
   it('throws error when fetch fails', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (fetch as any).mockResolvedValueOnce({
       ok: false
-    });
+    } as Response);
 
     await expect(fetchWeather(48.8566, 2.3522)).rejects.toThrow('Weather fetch failed');
   });
 
   it('includes API key in request', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({})
-    });
+    } as Response);
 
     await fetchWeather(48.8566, 2.3522);
 
